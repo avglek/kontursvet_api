@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS leads (
 CREATE TABLE IF NOT EXISTS portfolio_cases (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    case VARCHAR(255) NOT NULL,
+    case_item VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     task TEXT,
@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS portfolio_photos (
 );
 
 -- Indexes
-CREATE INDEX idx_leads_created_at ON leads(created_at);
-CREATE INDEX idx_portfolio_cases_name ON portfolio_cases(name);
-CREATE INDEX idx_portfolio_photos_case_id ON portfolio_photos(case_id);
-CREATE INDEX idx_portfolio_case_works_case_id ON portfolio_case_works(case_id);
-CREATE INDEX idx_portfolio_case_meta_case_id ON portfolio_case_meta(case_id);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at);
+CREATE INDEX IF NOT EXISTS idx_portfolio_cases_name ON portfolio_cases(name);
+CREATE INDEX IF NOT EXISTS idx_portfolio_photos_case_id ON portfolio_photos(case_id);
+CREATE INDEX IF NOT EXISTS idx_portfolio_case_works_case_id ON portfolio_case_works(case_id);
+CREATE INDEX IF NOT EXISTS idx_portfolio_case_meta_case_id ON portfolio_case_meta(case_id);
