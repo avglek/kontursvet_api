@@ -1,0 +1,274 @@
+definitions:
+  kontursvet-api_internal_model.Attachment:
+    properties:
+      content_type:
+        type: string
+      encoding:
+        type: string
+      filename:
+        type: string
+    type: object
+  kontursvet-api_internal_model.Lead:
+    properties:
+      created_at:
+        type: string
+      home_type:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      message:
+        type: string
+      name:
+        type: string
+      phone_digital:
+        type: string
+      phone_format:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  kontursvet-api_internal_model.LeadMessage:
+    properties:
+      attachments:
+        items:
+          $ref: '#/definitions/kontursvet-api_internal_model.Attachment'
+        type: array
+      text:
+        $ref: '#/definitions/kontursvet-api_internal_model.Lead'
+    type: object
+  kontursvet-api_internal_model.PortfolioCase:
+    properties:
+      case:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      features:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      meta:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      period:
+        type: string
+      task:
+        type: string
+      team:
+        type: string
+      term:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      works:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: КонтурСвет API Swagger
+  version: "1.0"
+paths:
+  /api/leads:
+    get:
+      description: Get all leads with pagination
+      parameters:
+      - default: 20
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List leads
+      tags:
+      - leads
+    post:
+      consumes:
+      - application/json
+      description: Create a new lead and send notification to MAX
+      parameters:
+      - description: Lead data
+        in: body
+        name: lead
+        required: true
+        schema:
+          $ref: '#/definitions/kontursvet-api_internal_model.Lead'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create lead
+      tags:
+      - leads
+  /api/portfolio:
+    get:
+      description: Get all portfolio cases
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List portfolio cases
+      tags:
+      - portfolio
+  /api/portfolio/{id}:
+    get:
+      description: Get a single portfolio case with photos
+      parameters:
+      - description: Case ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/kontursvet-api_internal_model.PortfolioCase'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get portfolio case by ID
+      tags:
+      - portfolio
+  /api/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a file for a lead
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload file
+      tags:
+      - uploads
+  /api/upload-json:
+    post:
+      consumes:
+      - application/json
+      description: Upload JSON with lead data and attachments
+      parameters:
+      - description: Lead message with attachments
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/kontursvet-api_internal_model.LeadMessage'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload JSON with lead data
+      tags:
+      - uploads
+swagger: "2.0"

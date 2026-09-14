@@ -24,6 +24,16 @@ func NewLeadHandler(leadService *service.LeadService, maxBotService *service.Max
 	}
 }
 
+// @Summary Create lead
+// @Description Create a new lead and send notification to MAX
+// @Tags leads
+// @Accept json
+// @Produce json
+// @Param lead body model.Lead true "Lead data"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/leads [post]
 func (h *LeadHandler) Create(c *gin.Context) {
 	lead := &model.Lead{}
 	if err := c.ShouldBindJSON(lead); err != nil {
@@ -45,6 +55,15 @@ func (h *LeadHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"success": true, "id": lead.ID})
 }
 
+// @Summary List leads
+// @Description Get all leads with pagination
+// @Tags leads
+// @Produce json
+// @Param limit query int false "Limit" default(20)
+// @Param offset query int false "Offset" default(0)
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]string
+// @Router /api/leads [get]
 func (h *LeadHandler) List(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
@@ -63,6 +82,16 @@ func (h *LeadHandler) List(c *gin.Context) {
 	})
 }
 
+// @Summary Upload file
+// @Description Upload a file for a lead
+// @Tags uploads
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "File to upload"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/upload [post]
 func (h *LeadHandler) Upload(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -88,6 +117,16 @@ func (h *LeadHandler) Upload(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"filename": filename})
 }
 
+// @Summary Upload JSON with lead data
+// @Description Upload JSON with lead data and attachments
+// @Tags uploads
+// @Accept json
+// @Produce json
+// @Param data body model.LeadMessage true "Lead message with attachments"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/upload-json [post]
 func (h *LeadHandler) UploadJSON(c *gin.Context) {
 	jsonData, _ := io.ReadAll(c.Request.Body)
 	var msg model.LeadMessage
